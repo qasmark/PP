@@ -56,14 +56,14 @@ void Blur(int radius, Params* params)
     }
 }
 
-DWORD WINAPI ThreadProc(CONST LPVOID lpParam)
+DWORD WINAPI StartThreads(CONST LPVOID lpParam)
 {
     struct Params* params = (struct Params*)lpParam;
     Blur(4, params);
     ExitThread(0);  
 }
 
-void ThreadsRunner(Bitmap* in, int threadsCount, int coreCount)
+void StartThreads(Bitmap* in, int threadsCount, int coreCount)
 {
     int partHeight = in->GetHeight() / threadsCount;
     int heightRemaining = in->GetHeight() % threadsCount;
@@ -83,7 +83,7 @@ void ThreadsRunner(Bitmap* in, int threadsCount, int coreCount)
     HANDLE* handles = new HANDLE[threadsCount];
     for (int i = 0; i < threadsCount; i++)
     {
-        handles[i] = CreateThread(NULL, i, &ThreadProc, &arrayParams[i], CREATE_SUSPENDED, NULL);
+        handles[i] = CreateThread(NULL, i, &StartThreads, &arrayParams[i], CREATE_SUSPENDED, NULL);
         SetThreadAffinityMask(handles[i], (1 << coreCount) - 1);
     }
 
@@ -103,8 +103,8 @@ int main(int argc, const char** argv)
 {
     double start = clock();
 
-    Bitmap bmp{ "DnD.bmp" };
-    ThreadsRunner(&bmp, 16, 4);
+    Bitmap bmp{ "formula.bmp" };
+    StartThreads(&bmp, 16, 4);
     bmp.Save("bluredImage.bmp");
 
     std::cout << (double)(clock() - start) / CLOCKS_PER_SEC << " s." << std::endl;
