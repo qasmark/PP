@@ -37,7 +37,7 @@
 
 * Необходимо объяснить разницу между private(x), firstprivate(x) и lastprivate(x) на примере ниже.
 
-'''C++
+```cpp
 int main()
 {
     int x = 44;
@@ -48,7 +48,7 @@ int main()
     }
     printf("x is %d\n", x);
 }
-'''
+```
 
 **Задание 3 (не обязательно, +1 балл)**
 
